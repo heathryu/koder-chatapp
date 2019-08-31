@@ -1,22 +1,20 @@
-const app = require("express")();
-const http = require("http").createServer(app);
-const path = require("path");
+const app = require('express')();
+const http = require('http').createServer(app);
+
 const io = require('socket.io')(http);
 
-app.get("/", (req, res) => {
-    // res.send("Express is running");
-    const htmlPath = path.resolve(__dirname, '..', 'index.html');
-    res.sendFile(htmlPath);
-})
-
 io.on('connection', socket => {
-    console.log('connected');
+  console.log('connected');
 
-    socket.on('disconnect', () => {
-        console.log('disconnected');
-    })
-})
+  socket.on('chat message', msg => {
+    io.emit('chat message', msg);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
 
 http.listen(3001, () => {
-    console.log("listening on 3001");
-})
+  console.log('listening on 3001');
+});
